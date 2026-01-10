@@ -1,3 +1,5 @@
+// This code is licensed under Apache 2.0
+
 const BAN_TIME = 1000 * 60 * 60;
 var tickn = 0;
 
