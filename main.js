@@ -5,12 +5,8 @@ onPlayerJoin = (id) => {
   removeMsChest(id);
 
   const item = api.getMoonstoneChestItemSlot(id, 0);
-  api.log(item);
   if ((item?.attributes?.customDisplayName || null) != "Data3") {
-    api.setMoonstoneChestItemSlot(id, 0, "Black Wool", 1, {
-      customDisplayName: "Data3",
-      customAttributes: { health: 100, banTime: 0 },
-    });
+    setData(id, { health: 100, banTime: 0 });
   } else {
     const banTime = item.attributes.customAttributes.banTime;
     if (banTime > Date.now()) {
@@ -38,35 +34,22 @@ onPlayerKilledOtherPlayer = (
   });
 
   const oldHealthDied = api.getClientOption(died, "maxHealth");
-  const diedItem = api.getMoonstoneChestItemSlot(died, 0);
   if (oldHealthDied <= 10) {
     api.broadcastMessage(`${diedName} was too weak to continue ...`, {
       color: "cyan",
     });
 
     api.kickPlayer(died, "No more HP");
-    api.setMoonstoneChestItemSlot(died, 0, "Black Wool", 1, {
-      customDisplayName: "Data3",
-      customAttributes: { health: 10, banTime: Date.now() + BAN_TIME },
-    });
+    setData(died, { health: 10, banTime: Date.now() + BAN_TIME });
     return;
   }
 
   const oldHealthKiller = api.getClientOption(killer, "maxHealth");
   const newKillerHealth = oldHealthKiller + 10;
   const newDiedHealth = oldHealthDied - 10;
-  const killerItem = api.getMoonstoneChestItemSlot(killer, 0);
 
-  api.log(`${JSON.stringify(diedItem)}, ${JSON.stringify(killerItem)}`);
-  api.setMoonstoneChestItemSlot(killer, 0, "Black Wool", 1, {
-    customDisplayName: "Data3",
-    customAttributes: { health: newKillerHealth, banTime: 0 },
-  });
-  api.setMoonstoneChestItemSlot(died, 0, "Black Wool", 1, {
-    customDisplayName: "Data3",
-    customAttributes: { health: newDiedHealth, banTime: 0 },
-  });
-  api.log(`${JSON.stringify(diedItem)}, ${JSON.stringify(killerItem)}`);
+  setData(killer, { health: newKillerHealth, banTime: 0 });
+  setData(died, { health: newDiedHealth, banTime: 0 });
 
   api.setClientOption(killer, "maxHealth", newKillerHealth);
   api.setClientOption(died, "maxHealth", newDiedHealth);
@@ -88,4 +71,11 @@ function removeMsChest(id) {
       },
     );
   }
+}
+
+function setData(id, data) {
+  api.setMoonstoneChestItemSlot(id, 0, "Black Wool", 1, {
+    customDisplayName: "Data3",
+    customAttributes: data,
+  });
 }
