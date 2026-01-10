@@ -1,4 +1,4 @@
-const BAN_TIME = 1000 * 100;
+const BAN_TIME = 1000 * 60 * 60;
 
 onPlayerJoin = (id) => {
   api.removeItemCraftingRecipes(id, "Moonstone Chest");
