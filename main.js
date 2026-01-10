@@ -1,4 +1,21 @@
 const BAN_TIME = 1000 * 60 * 60;
+var tickn = 0;
+
+tick = () => {
+  for (const id of api.getPlayerIds()) {
+    api.setClientOption(id, "skyBox", {
+      type: "earth",
+      inclination: tickn / 1500,
+      turbidity: .75,
+      luminance: .8,
+      azimuth: 0,
+      infiniteDistance: 3,
+      vertexTint: [255, 255, 255],
+    });
+  }
+
+  tickn++;
+};
 
 onPlayerJoin = (id) => {
   api.removeItemCraftingRecipes(id, "Moonstone Chest");
