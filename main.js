@@ -3,17 +3,19 @@
 
 const BAN_TIME = 1000 * 60 * 60;
 const MOB_SPAWN_CHANCE = 1 / 800;
+const DAY_LENGTH = 1000 * 60 * 5;
 
-var tickn = 0.5;
 var night = false;
 
 tick = () => {
-  night = Math.floor(tickn + 0.5) == 1;
+  const now = Date.now();
+  const incl = now / DAY_LENGTH;
+  night = Math.floor(incl + 0.5) == 1;
 
   for (const id of api.getPlayerIds()) {
     api.setClientOption(id, "skyBox", {
       type: "earth",
-      inclination: tickn,
+      inclination: incl,
       turbidity: 10,
       luminance: 1,
       azimuth: 0,
@@ -25,20 +27,12 @@ tick = () => {
     if (night) {
       if (Math.random() < MOB_SPAWN_CHANCE) {
         const [x, y, z] = api.getPosition(id);
-        const newLocal = x + Math.random() * 10;
-        const newLocal_1 = z + Math.random() * 10;
-        api.log(api.attemptSpawnMob(
-          "Draugr Zombie",
-          newLocal,
-          y,
-          newLocal_1,
-        ));
-        api.log([newLocal, newLocal_1]);
+        const offsetX = x + Math.random() * 15;
+        const offsetZ = z + Math.random() * 15;
+        api.attemptSpawnMob("Draugr Zombie", offsetX, y, offsetZ);
       }
     }
   }
-
-  tickn += 0.0005;
 };
 
 onPlayerJoin = (id) => {
