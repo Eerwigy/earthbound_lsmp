@@ -48,6 +48,10 @@ onPlayerKilledOtherPlayer = (
   const killerName = api.getEntityName(killer);
   const diedName = api.getEntityName(died);
 
+  if (killer == died) {
+    return;
+  }
+
   api.broadcastMessage(`${killerName} killed ${diedName}`, {
     color: "red",
   });
