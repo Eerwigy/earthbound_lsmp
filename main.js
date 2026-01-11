@@ -16,7 +16,7 @@ tick = () => {
     });
   }
 
-  tickn++;
+  tickn += 0.1;
 };
 
 onPlayerJoin = (id) => {
