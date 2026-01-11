@@ -3,14 +3,14 @@
 
 const BAN_TIME = 1000 * 60 * 60;
 const MOB_SPAWN_CHANCE = 1 / 800;
-const DAY_LENGTH = 1000 * 60 * 5;
+const DAY_LENGTH = 1000 * 60 * 3;
 
 var night = false;
 
 tick = () => {
   const now = Date.now();
   const incl = now / DAY_LENGTH;
-  night = Math.floor(incl + 0.5) == 1;
+  night = Math.floor(incl + 0.5) % 2 == 1;
 
   for (const id of api.getPlayerIds()) {
     api.setClientOption(id, "skyBox", {
@@ -24,14 +24,7 @@ tick = () => {
       vertexTint: [255, 255, 255],
     });
 
-    if (night) {
-      if (Math.random() < MOB_SPAWN_CHANCE) {
-        const [x, y, z] = api.getPosition(id);
-        const offsetX = x + Math.random() * 15;
-        const offsetZ = z + Math.random() * 15;
-        api.attemptSpawnMob("Draugr Zombie", offsetX, y, offsetZ);
-      }
-    }
+    spawnMobs(id);
   }
 };
 
@@ -97,6 +90,23 @@ onPlayerKilledOtherPlayer = (
 onInventoryUpdated = (id) => {
   removeMsChest(id);
 };
+
+function spawnMobs(id) {
+  if (night) {
+    if (Math.random() < MOB_SPAWN_CHANCE) {
+      const [x, y, z] = api.getPosition(id);
+      const offsetX = x + Math.random() * 25;
+      const offsetZ = z + Math.random() * 25;
+      const herdId = api.createMobHerd();
+      const mobN = Math.ceil(Math.random() * 4);
+      for (let i = 0; i < mobN; i += 1) {
+        api.attemptSpawnMob("Draugr Zombie", offsetX, y, offsetZ, {
+          mobHerdId: herdId,
+        });
+      }
+    }
+  }
+}
 
 function removeMsChest(id) {
   const amount = api.getInventoryItemAmount(id, "Moonstone Chest");
