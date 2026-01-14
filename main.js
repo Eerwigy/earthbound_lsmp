@@ -4,12 +4,28 @@
 const BAN_TIME = 1000 * 60 * 60;
 const MOB_SPAWN_CHANCE = 1 / 800;
 const MOB_SPAWN_DIST = 25;
-const MOB_HERD_SIZE = 4;
-const MOB_SPAWN_HEIGHT = 100;
+const MOB_SPAWN_HEIGHT = 90;
 const DAY_LENGTH = 1000 * 60 * 5;
 const LIFESTEAL = 10;
 
 var isNight = false;
+
+const MOB_SPAWN_TABLE = {
+  "Draugr Zombie": { herd: 4, prob: 100 },
+  "Draugr Skeleton": { herd: 3, prob: 75 },
+  "Frost Zombie": { herd: 4, prob: 25 },
+  "Frost Skeleton": { herd: 3, prob: 20 },
+  "Cave Golem": { herd: 2, prob: 20 },
+  "Frost Golem": { herd: 2, prob: 10 },
+  "Draugr Knight": { herd: 1, prob: 1 },
+};
+
+const MOB_SPAWN_LIST = Object.keys(MOB_SPAWN_TABLE);
+
+let MOB_TOTAL_PROB = 0;
+for (x in MOB_SPAWN_TABLE) {
+  MOB_TOTAL_PROB += MOB_SPAWN_TABLE[x].prob;
+}
 
 tick = () => {
   const now = Date.now();
@@ -106,17 +122,21 @@ function spawnMobs(id) {
       const offsetX = x + Math.random() * MOB_SPAWN_DIST * 2 - MOB_SPAWN_DIST;
       const offsetZ = z + Math.random() * MOB_SPAWN_DIST * 2 - MOB_SPAWN_DIST;
       const herdId = api.createMobHerd();
-      const mobN = Math.ceil(Math.random() * MOB_HERD_SIZE);
-      for (let i = 0; i < mobN; i += 1) {
-        api.attemptSpawnMob(
-          "Draugr Zombie",
-          offsetX,
-          MOB_SPAWN_HEIGHT,
-          offsetZ,
-          {
-            mobHerdId: herdId,
-          },
-        );
+
+      let mobName;
+      let prob = Math.floor(Math.random() * MOB_TOTAL_PROB);
+      for (mobName in MOB_SPAWN_TABLE) {
+        if ((prob -= MOB_SPAWN_TABLE[mobName].prob) <= 0) {
+          break;
+        }
+      }
+
+      const mobNum = Math.ceil(Math.random() * MOB_SPAWN_TABLE[mobName].herd);
+
+      for (let i = 0; i < mobNum; i += 1) {
+        api.attemptSpawnMob(mobName, offsetX, MOB_SPAWN_HEIGHT, offsetZ, {
+          mobHerdId: herdId,
+        });
       }
     }
   }
