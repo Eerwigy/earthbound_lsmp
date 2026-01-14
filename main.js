@@ -5,6 +5,7 @@ const BAN_TIME = 1000 * 60 * 60;
 const MOB_SPAWN_CHANCE = 1 / 800;
 const MOB_SPAWN_DIST = 25;
 const MOB_HERD_SIZE = 4;
+const MOB_SPAWN_HEIGHT = 100;
 const DAY_LENGTH = 1000 * 60 * 3;
 const LIFESTEAL = 10;
 
@@ -101,15 +102,21 @@ onInventoryUpdated = (id) => {
 function spawnMobs(id) {
   if (isNight) {
     if (Math.random() < MOB_SPAWN_CHANCE) {
-      const [x, y, z] = api.getPosition(id);
-      const offsetX = x + Math.random() * MOB_SPAWN_DIST;
-      const offsetZ = z + Math.random() * MOB_SPAWN_DIST;
+      const [x, _, z] = api.getPosition(id);
+      const offsetX = x + Math.random() * MOB_SPAWN_DIST * 2 - MOB_SPAWN_DIST;
+      const offsetZ = z + Math.random() * MOB_SPAWN_DIST * 2 - MOB_SPAWN_DIST;
       const herdId = api.createMobHerd();
       const mobN = Math.ceil(Math.random() * MOB_HERD_SIZE);
       for (let i = 0; i < mobN; i += 1) {
-        api.attemptSpawnMob("Draugr Zombie", offsetX, y, offsetZ, {
-          mobHerdId: herdId,
-        });
+        api.attemptSpawnMob(
+          "Draugr Zombie",
+          offsetX,
+          MOB_SPAWN_HEIGHT,
+          offsetZ,
+          {
+            mobHerdId: herdId,
+          },
+        );
       }
     }
   }
