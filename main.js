@@ -6,7 +6,7 @@ const MOB_SPAWN_CHANCE = 1 / 800;
 const MOB_SPAWN_DIST = 25;
 const MOB_HERD_SIZE = 4;
 const MOB_SPAWN_HEIGHT = 100;
-const DAY_LENGTH = 1000 * 60 * 3;
+const DAY_LENGTH = 1000 * 60 * 5;
 const LIFESTEAL = 10;
 
 var isNight = false;
