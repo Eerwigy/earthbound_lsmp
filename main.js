@@ -18,6 +18,7 @@ const MOB_SPAWN_TABLE = {
   "Cave Golem": { herd: 2, prob: 20 },
   "Frost Golem": { herd: 2, prob: 10 },
   "Draugr Knight": { herd: 1, prob: 1 },
+  "Draugr Warper": { herd: 6, prob: 0.5 },
 };
 
 const MOB_SPAWN_LIST = Object.keys(MOB_SPAWN_TABLE);
