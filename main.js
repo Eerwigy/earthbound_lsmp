@@ -2,7 +2,7 @@
 // Made by Yervweigh
 
 const BAN_TIME = 1000 * 60 * 60;
-const MOB_SPAWN_CHANCE = 1 / 800;
+const MOB_SPAWN_CHANCE = 1 / 200;
 const MOB_SPAWN_DIST = 25;
 const MOB_SPAWN_HEIGHT = 90;
 const DAY_LENGTH = 1000 * 60 * 5;
@@ -33,20 +33,12 @@ tick = () => {
   const incl = now / DAY_LENGTH;
   isNight = Math.floor(incl + 0.5) % 2 == 1;
 
-  for (const id of api.getPlayerIds()) {
-    api.setClientOption(id, "skyBox", {
-      type: "earth",
-      inclination: incl,
-      turbidity: 10,
-      luminance: 1,
-      azimuth: 0,
-      infiniteDistance: true,
-      yCameraOffset: -1,
-      vertexTint: [255, 255, 255],
-    });
-
-    spawnMobs(id);
+  const idList = api.getPlayerIds();
+  for (const id of idList) {
+    setSky(id, incl);
   }
+
+  spawnMobs(idList);
 };
 
 onPlayerJoin = (id) => {
@@ -116,30 +108,48 @@ onInventoryUpdated = (id) => {
   removeMsChest(id);
 };
 
-function spawnMobs(id) {
-  if (isNight) {
-    if (Math.random() < MOB_SPAWN_CHANCE) {
-      const [x, _, z] = api.getPosition(id);
-      const offsetX = x + Math.random() * MOB_SPAWN_DIST * 2 - MOB_SPAWN_DIST;
-      const offsetZ = z + Math.random() * MOB_SPAWN_DIST * 2 - MOB_SPAWN_DIST;
-      const herdId = api.createMobHerd();
+function setSky(id, incl) {
+  api.setClientOption(id, "skyBox", {
+    type: "earth",
+    inclination: incl,
+    turbidity: 10,
+    luminance: 1,
+    azimuth: 0,
+    infiniteDistance: true,
+    yCameraOffset: -1,
+    vertexTint: [255, 255, 255],
+  });
+}
 
-      let mobName;
-      let prob = Math.floor(Math.random() * MOB_TOTAL_PROB);
-      for (mobName in MOB_SPAWN_TABLE) {
-        if ((prob -= MOB_SPAWN_TABLE[mobName].prob) <= 0) {
-          break;
-        }
-      }
+function spawnMobs(idList) {
+  if (!isNight || Math.random() >= MOB_SPAWN_CHANCE) return;
 
-      const mobNum = Math.ceil(Math.random() * MOB_SPAWN_TABLE[mobName].herd);
+  const index = (Math.random() * idList.length) | 0;
+  const [x, , z] = api.getPosition(idList[index]);
 
-      for (let i = 0; i < mobNum; i += 1) {
-        api.attemptSpawnMob(mobName, offsetX, MOB_SPAWN_HEIGHT, offsetZ, {
-          mobHerdId: herdId,
-        });
-      }
+  const offsetX = x + (Math.random() * 2 - 1) * MOB_SPAWN_DIST;
+  const offsetZ = z + (Math.random() * 2 - 1) * MOB_SPAWN_DIST;
+
+  const herdId = api.createMobHerd();
+
+  let roll = Math.random() * MOB_TOTAL_PROB;
+  let mobName, mobData;
+
+  for (const [name, data] of Object.entries(MOB_SPAWN_TABLE)) {
+    roll -= data.prob;
+    if (roll <= 0) {
+      mobName = name;
+      mobData = data;
+      break;
     }
+  }
+
+  const mobNum = Math.ceil(Math.random() * mobData.herd);
+
+  for (let i = 0; i < mobNum; i++) {
+    api.attemptSpawnMob(mobName, offsetX, MOB_SPAWN_HEIGHT, offsetZ, {
+      mobHerdId: herdId,
+    });
   }
 }
 
