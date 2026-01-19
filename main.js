@@ -22,6 +22,7 @@ const MOB_SPAWN_TABLE = {
 };
 
 const MOB_SPAWN_LIST = Object.keys(MOB_SPAWN_TABLE);
+const MOB_SPAWN_ENTRIES = Object.entries(MOB_SPAWN_TABLE);
 
 let MOB_TOTAL_PROB = 0;
 for (x in MOB_SPAWN_TABLE) {
@@ -124,7 +125,7 @@ function setSky(id, incl) {
 function spawnMobs(idList) {
   if (!isNight || Math.random() >= MOB_SPAWN_CHANCE) return;
 
-  const index = (Math.random() * idList.length) | 0;
+  const index = Math.floor(Math.random() * idList.length);
   const [x, , z] = api.getPosition(idList[index]);
 
   const offsetX = x + (Math.random() * 2 - 1) * MOB_SPAWN_DIST;
@@ -135,7 +136,7 @@ function spawnMobs(idList) {
   let roll = Math.random() * MOB_TOTAL_PROB;
   let mobName, mobData;
 
-  for (const [name, data] of Object.entries(MOB_SPAWN_TABLE)) {
+  for (const [name, data] of MOB_SPAWN_ENTRIES) {
     roll -= data.prob;
     if (roll <= 0) {
       mobName = name;
