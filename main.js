@@ -147,7 +147,7 @@ function spawnMobs(idList) {
 
   const mobNum = Math.ceil(Math.random() * mobData.herd);
 
-  for (let i = 0; i < mobNum; i++) {
+  for (let i = 0; i < mobNum; i += 1) {
     api.attemptSpawnMob(mobName, offsetX, MOB_SPAWN_HEIGHT, offsetZ, {
       mobHerdId: herdId,
     });
