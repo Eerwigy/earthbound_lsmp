@@ -155,17 +155,18 @@ function spawnMobs(idList) {
 }
 
 function removeMsChest(id) {
-  const amount = api.getInventoryItemAmount(id, "Moonstone Chest");
-  if (amount > 0) {
-    api.removeItemName(id, "Moonstone Chest", amount);
-    api.sendMessage(
-      id,
-      "Moonstone chests are not allowed because I am an incompetent coder",
-      {
-        color: "orange",
-      },
-    );
-  }
+  const itemName = "Moonstone Chest";
+  const amount = api.getInventoryItemAmount(id, itemName);
+  if (!amount) return;
+
+  api.removeItemName(id, itemName, amount);
+  api.sendMessage(
+    id,
+    "Moonstone chests are not allowed because I am an incompetent coder",
+    {
+      color: "orange",
+    },
+  );
 }
 
 function setData(id, data) {
