@@ -2,7 +2,7 @@
 // Made by Yervweigh
 
 const BAN_TIME = 1000 * 60 * 60;
-const MOB_SPAWN_CHANCE = 1 / 100;
+const MOB_SPAWN_CHANCE = 1 / 200;
 const MOB_SPAWN_DIST = 25;
 const MOB_SPAWN_HEIGHT = 90;
 const DAY_LENGTH = 1000 * 60 * 5;
